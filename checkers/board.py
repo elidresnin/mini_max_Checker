@@ -1,7 +1,7 @@
 import pygame
 import random as r
-from .constants import BLACK, ROWS, RED, SQUARE_SIZE, COLS, WHITE
-from .piece import Piece
+from checkers.constants import BLACK, ROWS, RED, SQUARE_SIZE, COLS, WHITE
+from checkers.piece import Piece
 
 class Board:
     def __init__(self):
@@ -12,7 +12,7 @@ class Board:
     
     # this function will get the score - needs to be written
     def evaluate(self):
-      return r.randint(0, 10)
+      return (5 * len(self.get_all_pieces(WHITE)) + len(self.get_all_pieces(WHITE))) - (5 * len(self.get_all_pieces(RED)) + len(self.get_all_pieces(RED)))
 
     def draw_squares(self, win):
         win.fill(BLACK)
@@ -29,10 +29,20 @@ class Board:
       pieces = []
       for row in self.board:
         for piece in row:
-          if piece != 0 and piece.color == color:
+          if piece != 0 and piece.color == color and not piece.king:
             pieces.append(piece)
 
       return pieces
+
+    def get_all_kings(self, color):
+
+        pieces = []
+        for row in self.board:
+            for piece in row:
+                if piece != 0 and piece.color == color and piece.king:
+                    pieces.append(piece)
+
+        return pieces
 
     def move(self, piece, row, col):
         self.board[piece.row][piece.col], self.board[row][col] = self.board[row][col], self.board[piece.row][piece.col]
