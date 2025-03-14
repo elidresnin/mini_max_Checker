@@ -14,7 +14,7 @@ def minimax(current_board, depth, max_player):
     result = minimax_with_tree(current_board, depth, max_player, root)
     return result[0], result[1], root
 
-def minimax_with_tree(current_board, depth, max_player, node):
+def minimax_with_tree(current_board, depth, max_player, node, alpha = float('-inf'), beta = float('-inf')):
     if depth == 0 or current_board == None or current_board.winner() != None:
         score = current_board.evaluate()
         node.score = score
@@ -26,10 +26,14 @@ def minimax_with_tree(current_board, depth, max_player, node):
         for move in get_all_moves(current_board, WHITE):
             child_node = DecisionNode(False)
             node.children.append(child_node)
-            evaluation = minimax_with_tree(move, depth-1, False, child_node)[0]
+            evaluation = minimax_with_tree(move, depth-1, False, child_node, alpha, beta)[0]
             maxEval = max(maxEval, evaluation)
             if maxEval == evaluation:
                 best_move = move
+
+            alpha = max(alpha, maxEval)
+            if alpha <= beta:
+                break
         return maxEval, best_move
     else:
         minEval = float('inf')
@@ -41,6 +45,9 @@ def minimax_with_tree(current_board, depth, max_player, node):
             minEval = min(minEval, evaluation)
             if minEval == evaluation:
                 best_move = move
+            beta = min(beta, minEval)
+            if beta <= alpha:
+                    break
         return minEval, best_move
 
 def simulate_move(piece, move, board, skip):
